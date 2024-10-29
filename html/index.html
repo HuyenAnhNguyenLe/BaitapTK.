@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <script src="../js/jquery-3.7.1.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+  </head>
+  <style>
+    * {
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    .navbar {
+      margin: 0;
+    }
+
+    .form-control {
+      height: fit-content !important;
+    }
+
+    .modal-body {
+      margin: 0;
+    }
+
+    span {
+      color: red;
+    }
+  </style>
+  <script>
+    $(document).ready(function () {
+      //a. (1 điểm ) Khi click chuột vào menu Đăng ký mở được modal và tạo STT
+      var i = 2;
+      $("#btnDK").click(function () {
+        $("#myModal").modal("show");
+      });
+
+      //b. (1 điểm) Mã thành viên: chỉ dùng theo mẫu K16-xxxxxxxxx, gồm 13 kí tự, kí tự đầu K in hoa, kế tiếp 16-xxxxxxxxx, x là chữ số  không rỗng nhập sai báo lỗi hay bắt buộc nhập.
+      $("#txtMa").on("blur", function () {
+        const ma = $(this).val();
+        const regexMa = /^K16-\d{9}$/;
+        if (!regexMa.test(ma)) {
+          $("#tbMa").text("Mã không hợp lệ, đúng mẫu: K16-xxxxxxxxx");
+        } else {
+          $("#tbMa").text("*");
+        }
+      });
+
+      //c. (1 điểm) Họ tên: chỉ dùng chữ hoa đầu từ không dùng số không rỗng nhập sai báo lỗi hay bắt buộc nhập ví dụ: Tran Anh Dung .
+      $("#txtHT").on("blur", function () {
+        const ten = $(this).val();
+        const regexTen = /^[A-Z][a-z]*([ ][A-Z][a-z]*)+$/;
+        if (!regexTen.test(ten)) {
+          $("#tbTen").text("Tên không hợp lệ");
+        } else {
+          $("#tbTen").text("*");
+        }
+      });
+
+      //d. ( 1 điểm) Lớp: Dùng 11 kí tự gồm chữ in hoa và chữ số ví dụ:DHKTPM16BTT,  không rỗng nhập sai báo lỗi hay bắt buộc nhập.
+      $("#txtDV").on("blur", function () {
+        const lop = $(this).val();
+        const regexLop = /^[A-Z0-9]{11}$/;
+        if (!regexLop.test(lop)) {
+          $("#tbLop").text("Lớp không hợp lệ, đúng mẫu: DHKTPM16BTT");
+        } else {
+          $("#tbLop").text("*");
+        }
+      });
+
+      //e. (1 điểm) Ngày tham gia sau ngày hiện tại 30 ngày, không rỗng chọn sai báo lỗi hay bắt buộc nhập.
+      $(".txtDD").on("blur", function () {
+        const ngayThamGia = new Date($(this).val());
+        const ngayHienTai = new Date();
+        ngayHienTai.setDate(ngayHienTai.getDate() + 30);
+
+        if (ngayThamGia <= ngayHienTai) {
+          $("#tbNgay").text("Ngày tham gia phải sau ngày hiện tại 30 ngày");
+        } else {
+          $("#tbNgay").text("*");
+        }
+      });
+      //f. (1 điểm) Điện thoại theo mẫu: 0xxx-xxx-xxx bắt buộc dùng chữ số  0 ở đầu và các chữ số ở sau đúng định dạng. không rỗng nhập sai báo lỗi hay bắt buộc nhập.
+      $(".txtTel").on("blur", function () {
+        const tel = $(this).val();
+        const regexTel = /^0\d{3}-\d{3}-\d{3}$/;
+        if (!regexTel.test(tel)) {
+          $("#tbTel").text("SDT không hợp lệ, đúng mẫu: 0xxx-xxx-xxx");
+        } else {
+          $("#tbTel").text("*");
+        }
+      });
+      //g. (1 điểm) Email theo mẫu: xxxxx@iuh.edu.vn bắt buộc dùng chữ số  0 ở đầu và các chữ số ở sau đúng định dạng. không rỗng nhập sai báo lỗi hay bắt buộc nhập.
+      $("#txtDC").on("blur", function () {
+        const email = $(this).val();
+        const regexEmail = /^[a-zA-Z0-9._%+-]+@iuh\.edu\.vn$/;
+        if (!regexEmail.test(email)) {
+          $("#tbEmail").text("Email không hợp lệ, đúng mẫu: xxxxx@iuh.edu.vn");
+        } else {
+          $("#tbEmail").text("*");
+        }
+      });
+      //h. (2 điểm) Khi nhập đúng yêu cầu click vào button lưu vào bảng DANH SÁCH.
+      $("#btnSave").on("click", function () {
+        // Kiểm tra xem các điều kiện có hợp lệ không
+        if (
+          $("#tbMa").text() === "*" &&
+          $("#tbTen").text() === "*" &&
+          $("#tbLop").text() === "*" &&
+          $("#tbNgay").text() === "*" &&
+          $("#tbTel").text() === "*" &&
+          $("#tbEmail").text() === "*"
+        ) {
+          const newRow = `
+            <tr>
+                <td>${sttCounter++}</td>
+                <td>${$("#txtMa").val()}</td>
+                <td>${$("#txtHT").val()}</td>
+                <td>${$("#txtDV").val()}</td>
+                <td>${$("#txtDD").val()}</td>
+                <td>${$("#txttell").val()}</td>
+                <td>${$("#txtDC").val()}</td>
+            </tr>
+        `;
+          $("#tbDanhSach").append(newRow);
+
+          // Đóng modal và xóa trắng các trường sau khi lưu
+          $("#myModal").modal("hide");
+          $("#txtMa").val("");
+          $("#txtHT").val("");
+          $("#txtDV").val("");
+          $("#txtDD").val("");
+          $("#txttell").val("");
+          $("#txtDC").val("");
+          $("#tbMa").text("*");
+          $("#tbTen").text("*");
+          $("#tbLop").text("*");
+          $("#tbNgay").text("*");
+          $("#tbTel").text("*");
+          $("#tbEmail").text("*");
+        } else {
+          alert("Vui lòng nhập đầy đủ và đúng các trường thông tin!");
+        }
+      });
+    });
+  </script>
+
+  <body>
+    <div class="container border">
+      <div class="row">
+        <div class="col-12">
+          <img src="../img/HEADER.PNG" alt="" width="100%" />
+        </div>
+      </div>
+      <div style="background: rgb(221 221 221 / 24%)" class="row">
+        <nav class="navbar">
+          <ul class="nav nav-navbar navbar-expand">
+            <li class="nav-item"><a href="#" class="nav-link">Đăng nhập</a></li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" id="btnDK">Đăng kí</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="row">
+        <h2>DANH SÁCH THAM GIA ĐỘI ROBOTCON KHOA CNTT</h2>
+        <table
+          class="table-bordered table-light table-primary table-hover table table-striped"
+          id="tbDanhSach"
+        >
+          <tr>
+            <th>STT</th>
+            <th>Mã Thành Viên</th>
+            <th>Họ tên</th>
+            <th>Lớp</th>
+            <th>Ngày Tham Gia</th>
+            <th>Điện Thoại</th>
+            <th>Email</th>
+          </tr>
+          <tr>
+            <th>1</th>
+            <th>K16-1234556789</th>
+            <th>Tran Thanh Kha</th>
+            <th>DHKTPM16ATT</th>
+            <th>22/02/2022</th>
+            <th>0909-123-123</th>
+            <th>thanhkha@iuh.edu.vn</th>
+          </tr>
+        </table>
+      </div>
+      <div class="row">
+        <div class="modal fade" id="myModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1>THÔNG TIN CÁ NHÂN</h1>
+                <button type="button" class="close" data-dismiss="modal">
+                  &times;
+                </button>
+              </div>
+              <div class="modal-body">
+                <form action="" class="form-control">
+                  <div class="row form-group">
+                    <div class="col-4 col-sm-4">
+                      <label for="">Mã Thành Viên:</label>
+                    </div>
+                    <div class="col-8 col-sm-8">
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Mã: K16-123456789"
+                        id="txtMa"
+                      />
+                    </div>
+                    <div class="col-4 col-sm-4"></div>
+                    <div class="col-8 col-sm-8">
+                      <span id="tbMa">*</span>
+                    </div>
+                  </div>
+                  <div class="row form-group p-1">
+                    <div class="col-4 col-sm-4">
+                      <label for="">Họ Tên:</label>
+                    </div>
+                    <div class="col-8 col-sm-8">
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Tran Anh Dung"
+                        id="txtHT"
+                      />
+                    </div>
+                    <div class="col-4 col-sm-4"></div>
+                    <div class="col-8 col-sm-8">
+                      <span id="tbTen">*</span>
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-4 col-sm-4">
+                      <label for="">Lớp:</label>
+                    </div>
+                    <div class="col-8 col-sm-8">
+                      <input
+                        type="text"
+                        name="txtDV"
+                        class="form-control"
+                        placeholder="Lớp DHKTPM16ATT"
+                        id="txtDV"
+                      />
+                    </div>
+                    <div class="col-4 col-sm-4"></div>
+                    <div class="col-8 col-sm-8">
+                      <span id="tbLop">*</span>
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-4 col-sm-4">
+                      <label for="">Ngày tham gia:</label>
+                    </div>
+                    <div class="col-8 col-sm-8">
+                      <input
+                        type="text"
+                        name="txtDD"
+                        class="txtDD form-control"
+                        placeholder="mm/dd/yyyy"
+                        id="txtDD"
+                      />
+                    </div>
+                    <div class="col-4 col-sm-4"></div>
+                    <div class="col-8 col-sm-8">
+                      <span id="tbNgay">*</span>
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-4 col-sm-4">
+                      <label for="">Số Điện Thoại:</label>
+                    </div>
+                    <div class="col-8 col-sm-8">
+                      <input
+                        type="text"
+                        name="txttel"
+                        class="txtTel form-control"
+                        placeholder="SDT 0xxx-xxx-xxx"
+                        id="txttell"
+                      />
+                    </div>
+                    <div class="col-4 col-sm-4"></div>
+                    <div class="col-8 col-sm-8">
+                      <span id="tbTel">*</span>
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-4 col-sm-4">
+                      <label for="">Email:</label>
+                    </div>
+                    <div class="col-8 col-sm-8">
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Email:xxxxx@iuh.edu.vn"
+                        id="txtDC"
+                      />
+                    </div>
+                    <div class="col-4 col-sm-4"></div>
+                    <div class="col-8 col-sm-8">
+                      <span id="tbEmail">*</span>
+                    </div>
+                  </div>
+                  <br />
+                  <div class="row form-group p-1">
+                    <div class="col-sm-12">
+                      <input
+                        type="button"
+                        value="Lưu"
+                        id="btnSave"
+                        class="btn btn-success btn-block"
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4 col-md-4">
+          <h6>SVTH:................</h6>
+        </div>
+        <div class="col-4 col-md-4">
+          <h6>Mã số sinh viên:................</h6>
+        </div>
+        <div class="col-4 col-md-4">
+          <h6>Lớp: DHKTPM16ATT................</h6>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
